@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const { generateTextStreamWs } = require('./services/llmService');
 
 function initWebsockets(server) {
     const wss = new WebSocket.Server({ server, path: '/ws' });
@@ -7,8 +8,9 @@ function initWebsockets(server) {
         const remote = req && req.socket ? `${req.socket.remoteAddress}:${req.socket.remotePort}` : 'unknown';
         console.log('Client connected:', remote);
 
-        ws.on('message', msg => {
-            console.log('Received:', msg.toString());
+        ws.on('message', async prompt => {
+            console.log('Received:', prompt.toString());
+            generateTextStreamWs(prompt.toString(), ws);
         });
 
         ws.on('close', () => {

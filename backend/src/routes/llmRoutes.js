@@ -1,6 +1,6 @@
 // Router for llm calls
 const express = require('express');
-const generateText = require('../services/llmService')
+const { generateTextStreamHttp } = require('../services/llmService')
 
 const router = express.Router();
 
@@ -15,8 +15,7 @@ router.post('/textgen', async (req, res) => {
     }
 
     try {
-        const text = await generateText(prompt);
-        return res.json({ text });
+        await generateTextStreamHttp(prompt, res);
     } catch (err) {
         console.error('LLM service error:', err);
         return res.status(502).json({ error: err.message || 'LLM error' });
